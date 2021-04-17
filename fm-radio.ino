@@ -20,13 +20,13 @@ LiquidCrystal lcd(rs, en, d4, d5, d6, d7);
 
 // Volume icon
 byte vol_icon[8] = {
-  B00000,
-  B01010,
-  B10101,
-  B01010,
-  B10101,
-  B01010,
-  B00000,
+  B00000, //
+  B01010, // # #
+  B10101, //# # #
+  B01010, // # #
+  B10101, //# # #
+  B01010, // # #
+  B00000, //
 };
 
 SI4703 radio;    // Create instance of SI4703
@@ -44,6 +44,8 @@ const int FREQ_BUTTON_PIN = 13;
 const int BTN_VOL_UP_PIN = 9;
 const int BTN_VOL_DOWN_PIN = 8;
 
+const int BTN_MUTE = 10;
+const int MUTE_BTN_LED = A0;
 unsigned long timestamp = ULONG_MAX;
 
 static RADIO_FREQ lastf = -1;
@@ -120,6 +122,9 @@ void setup() {
 
 	pinMode(BTN_VOL_UP_PIN, INPUT_PULLUP);
 	pinMode(BTN_VOL_DOWN_PIN, INPUT_PULLUP);
+
+	pinMode(BTN_MUTE, INPUT_PULLUP);
+	pinMode(MUTE_BTN_LED, OUTPUT);
 }
 
 void loop() {
@@ -145,6 +150,24 @@ void loop() {
 		}
 		radio.setVolume(radio.getVolume() - 1);
 		print_volume();
+	}
+
+	int mute_button_state = digitalRead(BTN_MUTE);
+	if(mute_button_state == LOW) {
+		delay(100);
+		do {
+			mute_button_state = digitalRead(BTN_MUTE);
+			delay(10);
+		} while(mute_button_state == LOW);
+		bool mute_state = radio.getMute();
+		if(mute_state == false) {
+			radio.setMute(true);
+			digitalWrite(MUTE_BTN_LED, HIGH);
+		}
+		if(mute_state == true) {
+			radio.setMute(false);
+			digitalWrite(MUTE_BTN_LED, LOW);
+		}
 	}
 
 	if(digitalRead(FREQ_BUTTON_PIN) == LOW) {
