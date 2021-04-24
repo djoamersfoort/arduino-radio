@@ -48,6 +48,8 @@ const int BTN_MUTE = 10;
 const int MUTE_BTN_LED = A0;
 unsigned long timestamp = ULONG_MAX;
 
+const int POWER_BUTTON_PIN = A3;
+
 static RADIO_FREQ lastf = -1;
 static unsigned long nextFreqTime = 0;
 RADIO_FREQ f = 0;
@@ -114,9 +116,7 @@ void setup() {
 	// LCD
 	lcd.createChar(0, vol_icon);
 	lcd.begin(16, 2);
-	lcd.print("RDS :");
-	lcd.setCursor(0, 1);
-	lcd.print("FREQ:");
+	lcd.noDisplay();
 
 	pinMode(FREQ_BUTTON_PIN, INPUT_PULLUP);
 
@@ -125,6 +125,8 @@ void setup() {
 
 	pinMode(BTN_MUTE, INPUT_PULLUP);
 	pinMode(MUTE_BTN_LED, OUTPUT);
+
+	pinMode(POWER_BUTTON_PIN, INPUT);
 }
 
 void loop() {
@@ -159,6 +161,7 @@ void loop() {
 			mute_button_state = digitalRead(BTN_MUTE);
 			delay(10);
 		} while(mute_button_state == LOW);
+
 		bool mute_state = radio.getMute();
 		if(mute_state == false) {
 			radio.setMute(true);
@@ -170,11 +173,40 @@ void loop() {
 		}
 	}
 
+	static bool should_power_on = true; 
+	static int last_volume = radio.getVolume();
+	int power_button_state = digitalRead(POWER_BUTTON_PIN);
+	if(power_button_state == LOW && !should_power_on) {
+		Serial.println("Turning off...");
+		last_volume = radio.getVolume();
+		radio.setVolume(0);
+		lcd.noDisplay();
+		radio.term();
+		should_power_on = true;
+	} else if(power_button_state == HIGH && should_power_on) {
+		Serial.println("Turning on...");
+		radio.init();
+		lcd.display();
+		radio.setVolume(last_volume);
+		should_power_on = false;
+	}
+	//Serial.print("Power button : "); Serial.println(digitalRead(POWER_BUTTON_PIN));
+	//Serial.print("Power on bool: "); Serial.println(should_power_on);
+
+
 	if(digitalRead(FREQ_BUTTON_PIN) == LOW) {
-		encoder_value += encoder->getValue() * 5;
+		int encoder_offset = encoder->getValue();
+		if(encoder_offset >= 1) 
+			encoder_value += 5;
+		else if(encoder_offset <= -1)
+			encoder_value -= 5;
 	}
 	if(digitalRead(FREQ_BUTTON_PIN) == HIGH) {
-		encoder_value += encoder->getValue() * 50;
+		int encoder_offset = encoder->getValue();
+		if(encoder_offset >= 1) 
+			encoder_value += 50;
+		else if(encoder_offset <= -1)
+			encoder_value -= 50;
 	}
 	if(encoder_value < 8749) {
 		lcd.setCursor(0, 1);
