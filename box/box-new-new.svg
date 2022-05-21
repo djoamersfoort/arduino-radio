@@ -13,7 +13,7 @@
    version="1.1"
    preserveAspectRatio="xMidYMid meet"
    id="svg9"
-   sodipodi:docname="box.svg"
+   sodipodi:docname="box-new-new.svg"
    inkscape:version="1.0.2 (e86c870879, 2021-01-15, custom)">
   <metadata
      id="metadata15">
@@ -41,14 +41,13 @@
      inkscape:window-height="1024"
      id="namedview11"
      showgrid="false"
-     inkscape:zoom="2.9812408"
-     inkscape:cx="58.481257"
-     inkscape:cy="203.78894"
+     inkscape:zoom="14.541194"
+     inkscape:cx="16.908161"
+     inkscape:cy="91.563604"
      inkscape:window-x="0"
      inkscape:window-y="0"
      inkscape:window-maximized="1"
-     inkscape:current-layer="layer1"
-     inkscape:document-rotation="0" />
+     inkscape:current-layer="svg9" />
   <g
      id="svgGroup"
      stroke-linecap="round"
@@ -59,42 +58,42 @@
      fill="none"
      style="stroke:#000;stroke-width:0.25mm;fill:none">
     <path
-       d="M 0 83 L 0 102.5 L 4 102.5 L 4 123.5 L 0 123.5 L 0 143 L 18.5 143 L 18.5 139 L 39.5 139 L 39.5 143 L 60.5 143 L 60.5 139 L 81.5 139 L 81.5 143 L 100 143 L 100 123.5 L 96 123.5 L 96 102.5 L 100 102.5 L 100 83 L 81.5 83 L 81.5 87 L 60.5 87 L 60.5 83 L 39.5 83 L 39.5 87 L 18.5 87 L 18.5 83 L 0 83 Z"
+       d="M 0 73 L 0 96.375 L 4 96.375 L 4 119.625 L 0 119.625 L 0 143 L 15.125 143 L 15.125 139 L 38.375 139 L 38.375 143 L 61.625 143 L 61.625 139 L 84.875 139 L 84.875 143 L 100 143 L 100 119.625 L 96 119.625 L 96 96.375 L 100 96.375 L 100 73 L 84.875 73 L 84.875 77 L 61.625 77 L 61.625 73 L 38.375 73 L 38.375 77 L 15.125 77 L 15.125 73 L 0 73 Z"
        id="front_outsideCutPath"
        stroke="#FF0000"
        stroke-width="1"
        style="stroke:#FF0000;stroke-width:1"
        vector-effect="non-scaling-stroke" />
     <path
-       d="M 107 83 L 107 102.5 L 103 102.5 L 103 123.5 L 107 123.5 L 107 143 L 127.5 143 L 127.5 139 L 148.5 139 L 148.5 143 L 169 143 L 169 123.5 L 173 123.5 L 173 102.5 L 169 102.5 L 169 83 L 148.5 83 L 148.5 87 L 127.5 87 L 127.5 83 L 107 83 Z"
+       d="M 107 73 L 107 96.375 L 103 96.375 L 103 119.625 L 107 119.625 L 107 143 L 126.375 143 L 126.375 139 L 149.625 139 L 149.625 143 L 169 143 L 169 119.625 L 173 119.625 L 173 96.375 L 169 96.375 L 169 73 L 149.625 73 L 149.625 77 L 126.375 77 L 126.375 73 L 107 73 Z"
        id="left_outsideCutPath"
        stroke="#FF0000"
        stroke-width="1"
        style="stroke:#FF0000;stroke-width:1"
        vector-effect="non-scaling-stroke" />
     <path
-       d="M 180 77 L 180 97.5 L 176 97.5 L 176 118.5 L 180 118.5 L 180 139 L 194.5 139 L 194.5 143 L 215.5 143 L 215.5 139 L 236.5 139 L 236.5 143 L 257.5 143 L 257.5 139 L 272 139 L 272 118.5 L 276 118.5 L 276 97.5 L 272 97.5 L 272 77 L 257.5 77 L 257.5 73 L 236.5 73 L 236.5 77 L 215.5 77 L 215.5 73 L 194.5 73 L 194.5 77 L 180 77 Z"
+       d="M 180 77 L 180 96.375 L 176 96.375 L 176 119.625 L 180 119.625 L 180 139 L 191.125 139 L 191.125 143 L 214.375 143 L 214.375 139 L 237.625 139 L 237.625 143 L 260.875 143 L 260.875 139 L 272 139 L 272 119.625 L 276 119.625 L 276 96.375 L 272 96.375 L 272 77 L 260.875 77 L 260.875 73 L 237.625 73 L 237.625 77 L 214.375 77 L 214.375 73 L 191.125 73 L 191.125 77 L 180 77 Z"
        id="top_outsideCutPath"
        stroke="#FF0000"
        stroke-width="1"
        style="stroke:#FF0000;stroke-width:1"
        vector-effect="non-scaling-stroke" />
     <path
-       d="M 0 20 L 0 39.5 L 4 39.5 L 4 60.5 L 0 60.5 L 0 80 L 18.5 80 L 18.5 76 L 39.5 76 L 39.5 80 L 60.5 80 L 60.5 76 L 81.5 76 L 81.5 80 L 100 80 L 100 60.5 L 96 60.5 L 96 39.5 L 100 39.5 L 100 20 L 81.5 20 L 81.5 24 L 60.5 24 L 60.5 20 L 39.5 20 L 39.5 24 L 18.5 24 L 18.5 20 L 0 20 Z"
+       d="M 0 0 L 0 23.375 L 4 23.375 L 4 46.625 L 0 46.625 L 0 70 L 15.125 70 L 15.125 66 L 38.375 66 L 38.375 70 L 61.625 70 L 61.625 66 L 84.875 66 L 84.875 70 L 100 70 L 100 46.625 L 96 46.625 L 96 23.375 L 100 23.375 L 100 0 L 84.875 0 L 84.875 4 L 61.625 4 L 61.625 0 L 38.375 0 L 38.375 4 L 15.125 4 L 15.125 0 L 0 0 Z"
        id="back_outsideCutPath"
        stroke="#FF0000"
        stroke-width="1"
        style="stroke:#FF0000;stroke-width:1"
        vector-effect="non-scaling-stroke" />
     <path
-       d="M 107 20 L 107 39.5 L 103 39.5 L 103 60.5 L 107 60.5 L 107 80 L 127.5 80 L 127.5 76 L 148.5 76 L 148.5 80 L 169 80 L 169 60.5 L 173 60.5 L 173 39.5 L 169 39.5 L 169 20 L 148.5 20 L 148.5 24 L 127.5 24 L 127.5 20 L 107 20 Z"
+       d="M 107 0 L 107 23.375 L 103 23.375 L 103 46.625 L 107 46.625 L 107 70 L 126.375 70 L 126.375 66 L 149.625 66 L 149.625 70 L 169 70 L 169 46.625 L 173 46.625 L 173 23.375 L 169 23.375 L 169 0 L 149.625 0 L 149.625 4 L 126.375 4 L 126.375 0 L 107 0 Z"
        id="right_outsideCutPath"
        stroke="#FF0000"
        stroke-width="1"
        style="stroke:#FF0000;stroke-width:1"
        vector-effect="non-scaling-stroke" />
     <path
-       d="M 180 4 L 180 24.5 L 176 24.5 L 176 45.5 L 180 45.5 L 180 66 L 194.5 66 L 194.5 70 L 215.5 70 L 215.5 66 L 236.5 66 L 236.5 70 L 257.5 70 L 257.5 66 L 272 66 L 272 45.5 L 276 45.5 L 276 24.5 L 272 24.5 L 272 4 L 257.5 4 L 257.5 0 L 236.5 0 L 236.5 4 L 215.5 4 L 215.5 0 L 194.5 0 L 194.5 4 L 180 4 Z"
+       d="M 180 4 L 180 23.375 L 176 23.375 L 176 46.625 L 180 46.625 L 180 66 L 191.125 66 L 191.125 70 L 214.375 70 L 214.375 66 L 237.625 66 L 237.625 70 L 260.875 70 L 260.875 66 L 272 66 L 272 46.625 L 276 46.625 L 276 23.375 L 272 23.375 L 272 4 L 260.875 4 L 260.875 0 L 237.625 0 L 237.625 4 L 214.375 4 L 214.375 0 L 191.125 0 L 191.125 4 L 180 4 Z"
        id="bottom_outsideCutPath"
        stroke="#FF0000"
        stroke-width="1"
@@ -106,31 +105,33 @@
      id="rect1924"
      width="71.199997"
      height="25"
-     x="14.787083"
-     y="28.623753" />
+     x="9.3310366"
+     y="11.359554" />
   <circle
      style="fill:none;stroke:#000000;stroke-width:0.129438;stroke-opacity:1"
      id="path2752"
-     cx="17.307251"
-     cy="62.502403"
+     cx="13.139"
+     cy="45.463848"
      r="2.9352813" />
-  <rect
-     style="fill:none;stroke:#000000;stroke-width:0.257585"
-     id="rect838"
-     width="11.642415"
-     height="9.5424147"
-     x="74.250778"
-     y="62.376987" />
   <rect
      style="fill:none;stroke:#000000;stroke-width:0.176559"
      id="rect840"
      width="7.5008006"
      height="1.7525082"
-     x="36.304501"
-     y="65.23774" />
-  <g
-     inkscape:groupmode="layer"
-     id="layer1"
-     inkscape:label="Layer 1"
-     style="display:inline" />
+     x="35.610954"
+     y="47.44437" />
+  <rect
+     style="fill:none;stroke:#000000;stroke-width:0.264583"
+     id="rect855"
+     width="13"
+     height="20.4"
+     x="257.52396"
+     y="10.75532" />
+  <rect
+     style="fill:none;stroke:#000000;stroke-width:0.264583"
+     id="rect857"
+     width="17.5"
+     height="17.5"
+     x="239.25159"
+     y="6.4974442" />
 </svg>

@@ -1,8 +1,10 @@
-SERIAL = /dev/ttyACM0
-FQBN = arduino:avr:uno
+#SERIAL = /dev/ttyACM0
+SERIAL = /dev/ttyUSB0
+#FQBN = arduino:avr:uno
+FQBN = arduino:avr:nano:cpu=atmega328old
 
 compile:
-	arduino-cli compile -p ${SERIAL} --fqbn ${FQBN} fm-radio
+	arduino-cli compile -p ${SERIAL} --fqbn ${FQBN} fm-radio --warnings "more"
 upload:
 	arduino-cli upload -p ${SERIAL} --fqbn ${FQBN} fm-radio
 monitor:
