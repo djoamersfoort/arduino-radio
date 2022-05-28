@@ -16,8 +16,8 @@
 #include "button.h"
 #include "store.h"
 
-const int EEPROM_FREQ_ADX = 0;
 
+// States
 enum MYSTATES {
 	STATE_INIT = 0,
 	STATE_LISTEN,
@@ -43,6 +43,7 @@ void change_state(MYSTATES s) {
 	Serial.println(state);
 }
 
+const int EEPROM_FREQ_ADX = 0;
 // Pins
 const unsigned char vol_up_pin   = 10;
 const unsigned char vol_down_pin = 8;
@@ -193,7 +194,6 @@ void sleep() {
 		radio.setMute(1);
 		lcd.noDisplay();
 		radio.term();
-
 }
 
 void setup() {
@@ -230,10 +230,6 @@ void setup() {
 	// LCD
 	lcd.clear();
 
-	lcd.setCursor(0, 0);
-	lcd.print("RDS :          ");
-	DisplayFrequency();
-
 	init_timer_1(100);
 }
 
@@ -241,7 +237,17 @@ void do_states(void) {
 	switch (state) {
 		case STATE_INIT:
 			{
-				change_state(STATE_LISTEN);
+				if(ButtonPower.peek()) {
+					lcd.setCursor(0, 0);
+					lcd.print("   Check power");
+					lcd.setCursor(0, 1);
+					lcd.print("     button");
+				} else {
+					lcd.setCursor(0, 0);
+					lcd.print("RDS :          ");
+					DisplayFrequency();
+					change_state(STATE_LISTEN);
+				}
 				break;
 			}
 		case STATE_MUTE:
@@ -310,8 +316,6 @@ void do_states(void) {
 		case STATE_SLEEP:
 			if(ButtonPower.isNegEdge()) {
 				change_state(STATE_WAKE);
-			//radio.setVolume(last_volume);
-			//should_power_on = false;
 			}
 			break;
 		case STATE_TUNE:
@@ -319,8 +323,7 @@ void do_states(void) {
 		case STATE_MUTE_RELEASE:
 			break;
 		case STATE_WAKE:
-			radio.init();
-			lcd.display();
+			change_state(STATE_LISTEN);
 			break;
 		case STANDARD:
 			{
@@ -332,7 +335,8 @@ void do_states(void) {
 }
 
 void loop() {
-	if(encoder_changed) {
+	if(encoder_changed) { // Has the encoder changed position?
+		// Set and display frequency
 		encoder_value = check_frequency(encoder_value);
 		radio.setFrequency(encoder_value);
 		DisplayFrequency();
@@ -350,12 +354,6 @@ void loop() {
 
 	do_states();
 
-	// Display something on the lcd when muted.
-	if(radio.getMute() == true) {
-		lcd.setCursor(15, 0);
-		lcd.write(byte(0));
-	}
-/*
 	// Power button
 	static bool should_power_on = true;
 	int power_button_state = ButtonPower.peek();
@@ -367,7 +365,12 @@ void loop() {
 		wake();
 		should_power_on = !should_power_on;
 	}
-*/
+
+	// Display something on the lcd when muted.
+	if(radio.getMute() == true && !power_button_state) {
+		lcd.setCursor(15, 0);
+		lcd.write(byte(0));
+	}
 	radio.checkRDS();
 }
 
