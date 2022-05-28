@@ -184,16 +184,26 @@ void volume_down() {
 }
 
 void wake() {
-		Serial.println("Turning on...");
-		radio.init();
+	change_state(STATE_WAKE);
+	Serial.println("Turning on...");
+	radio.init();
+	radio.debugEnable();
+	radio.setBandFrequency(RADIO_BAND_FM, encoder_value);
+	radio.setMono(false);
+	radio.setMute(false);
+	radio.setVolume(8);
+
+
 		lcd.display();
 		radio.setMute(0);
 }
 void sleep() {
+		change_state(STATE_SLEEP);
 		Serial.println("Turing off...");
 		radio.setMute(1);
-		lcd.noDisplay();
 		radio.term();
+		save_to_eeprom(EEPROM_FREQ_ADX, encoder_value);
+		lcd.noDisplay();
 }
 
 void setup() {
@@ -237,17 +247,19 @@ void do_states(void) {
 	switch (state) {
 		case STATE_INIT:
 			{
-				if(ButtonPower.peek()) {
-					lcd.setCursor(0, 0);
-					lcd.print("   Check power");
-					lcd.setCursor(0, 1);
-					lcd.print("     button");
-				} else {
-					lcd.setCursor(0, 0);
-					lcd.print("RDS :          ");
-					DisplayFrequency();
-					change_state(STATE_LISTEN);
-				}
+				/* while(ButtonPower.peek()) { */
+				/* 	lcd.setCursor(0, 0); */
+				/* 	lcd.print("   Check power"); */
+				/* 	lcd.setCursor(0, 1); */
+				/* 	lcd.print("     button"); */
+				/* 	delay(250); */
+				/* } */
+				lcd.clear();
+				lcd.setCursor(0, 0);
+				lcd.print("RDS :          ");
+				DisplayFrequency();
+
+				change_state(STATE_LISTEN);
 				break;
 			}
 		case STATE_MUTE:
@@ -314,7 +326,8 @@ void do_states(void) {
 				break;
 			}
 		case STATE_SLEEP:
-			if(ButtonPower.isNegEdge()) {
+			//if(ButtonPower.isNegEdge()) {
+			if(ButtonPower.peek()) {
 				change_state(STATE_WAKE);
 			}
 			break;
@@ -336,10 +349,15 @@ void do_states(void) {
 
 void loop() {
 	if(encoder_changed) { // Has the encoder changed position?
+		Serial.println("1");
 		// Set and display frequency
 		encoder_value = check_frequency(encoder_value);
+		Serial.println("2");
+		Serial.println(encoder_value);
 		radio.setFrequency(encoder_value);
+		Serial.println("3");
 		DisplayFrequency();
+		Serial.println("4");
 
 		if(encoder_value == last_rds_freq) {
 			DisplayServiceName(last_rds);
@@ -348,26 +366,26 @@ void loop() {
 			lcd.setCursor(0, 0);
 			lcd.print("RDS :          ");
 		}
-		save_to_eeprom(EEPROM_FREQ_ADX, encoder_value);
 		encoder_changed = false;
 	}
 
 	do_states();
 
 	// Power button
-	static bool should_power_on = true;
-	int power_button_state = ButtonPower.peek();
-	if(ButtonPower.isPosEdge()) {
-		sleep();
-		should_power_on = !should_power_on;
-	}
-	if(should_power_on && !power_button_state) {
-		wake();
-		should_power_on = !should_power_on;
-	}
+	/* static bool should_power_on = true; */
+	/* int power_button_state = ButtonPower.peek(); */
+	/* //Serial.println(power_button_state); */
+	/* if(ButtonPower.isPosEdge()) { */
+	/* 	sleep(); */
+	/* 	should_power_on = !should_power_on; */
+	/* } */
+	/* if(should_power_on && !power_button_state) { */
+	/* 	wake(); */
+	/* 	should_power_on = !should_power_on; */
+	/* } */
 
 	// Display something on the lcd when muted.
-	if(radio.getMute() == true && !power_button_state) {
+	if(radio.getMute() == true /* && !power_button_state */) {
 		lcd.setCursor(15, 0);
 		lcd.write(byte(0));
 	}
