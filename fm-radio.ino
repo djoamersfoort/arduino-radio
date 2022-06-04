@@ -4,10 +4,7 @@
 #include <limits.h>
 
 #include <radio.h>
-//#include <RDA5807M.h>
 #include <SI4703.h>
-//#include <SI4705.h>
-//#include <TEA5767.h>
 
 #include <RDSParser.h>
 #include <LiquidCrystal.h>
@@ -19,17 +16,17 @@
 
 // States
 enum MYSTATES {
-	STATE_INIT = 0,
-	STATE_LISTEN,
-	STATE_TUNE,
-	STATE_VOLUP,
-	STATE_VOLDWN,
-	STATE_VOL_RELEASE,
-	STATE_MUTE,
-	STATE_MUTE_RELEASE,
-	STATE_SLEEP,
-	STATE_WAKE,
-	STANDARD,
+	STATE_INIT = 0,     // 0
+	STATE_LISTEN,       // 1
+	STATE_TUNE,         // 2
+	STATE_VOLUP,        // 3
+	STATE_VOLDWN,       // 4
+	STATE_VOL_RELEASE,  // 5
+	STATE_MUTE,         // 6
+	STATE_MUTE_RELEASE, // 7
+	STATE_SLEEP,        // 8
+	STATE_WAKE,         // 9
+	STANDARD,           // 10
 };
 MYSTATES state = STATE_INIT;
 
@@ -43,14 +40,14 @@ void change_state(MYSTATES s) {
 	Serial.println(state);
 }
 
-const int EEPROM_FREQ_ADX = 0;
+const int EEPROM_FREQ_ADX = 0; // EEPROM address of frequency.
 // Pins
 const unsigned char vol_up_pin   = 10;
 const unsigned char vol_down_pin = 8;
 const unsigned char mute_pin     = A0;
 const unsigned char pwr_pin      = A3;
 const unsigned char freq_pin     = 13;
-// Buttons
+// Buttons           pin           input
 TButton ButtonUp    (vol_up_pin,   false); // Volume up button
 TButton ButtonDown  (vol_down_pin, false); // Volume down button
 TButton ButtonMute  (mute_pin,     false); // Mute button
@@ -62,11 +59,8 @@ char     *last_rds;    // RDS buffer
 int       last_rds_freq;
 // Rotary encoder
 uint16_t encoder_value = read_eeprom(EEPROM_FREQ_ADX); // Used to keep track of frequency
-bool     encoder_changed;      // Has the encoders position changed?
+bool     encoder_changed;    // Has the encoders position changed?
 Rotary   r = Rotary(A2, A1);
-
-//unsigned long timestamp = 0;
-//RADIO_FREQ f = 0;
 
 void RDS_process(uint16_t block1, uint16_t block2, uint16_t block3, uint16_t block4) {
 	rds.processData(block1, block2, block3, block4);
@@ -101,10 +95,8 @@ void DisplayFrequency() {
 	lcd.setCursor(0, 1);
 	lcd.print("FREQ:");
 	lcd.print(s);
-	//Serial.print("FREQ: ");
-	//Serial.println(s);
 
-	Serial.print("DisplayFrequency() =  "); Serial.println(s);
+	Serial.print("DisplayFrequency() = "); Serial.println(s);
 }
 
 // Display RDS on the lcd
@@ -120,7 +112,7 @@ void DisplayServiceName(char *name) {
 	last_rds = name;
 	last_rds_freq = encoder_value;
 
-	Serial.print("DisplayServiceName() ="); Serial.println(name);
+	Serial.print("DisplayServiceName() = "); Serial.println(name);
 }
 // Check if the frequency is within 87.50 <-> 108.00 Mhz.
 int check_frequency(int value) {
@@ -128,6 +120,7 @@ int check_frequency(int value) {
 		lcd.setCursor(0, 1);
 		lcd.print("Error: Too low  ");
 		Serial.println("Low freq");
+
 		delay(500);
 		value = 8750;
 	}
@@ -135,6 +128,7 @@ int check_frequency(int value) {
 		lcd.setCursor(0, 1);
 		lcd.print("Error: Too high ");
 		Serial.println("High freq");
+
 		delay(500);
 		value = 10800;
 	}
@@ -320,10 +314,12 @@ void do_states(void) {
 				break;
 			}
 		case STATE_SLEEP:
-			if(ButtonPower.isPosEdge()) {
-				wake();
+			{
+				if(ButtonPower.isPosEdge()) {
+					wake();
+				}
+				break;
 			}
-			break;
 		case STATE_TUNE:
 			break;
 		case STATE_MUTE_RELEASE:
@@ -361,7 +357,6 @@ void loop() {
 	do_states();
 
 	// Power button
-	//Serial.println(power_button_state);
 	if(ButtonPower.isNegEdge() && state != STATE_SLEEP) {
 		sleep();
 	}
@@ -405,17 +400,13 @@ ISR(TIMER1_COMPA_vect)      // timer-1 compare interrupt service routine
 	unsigned char result = r.process();
 	if (result != DIR_NONE) {          // Has the encoder changed?
 		int b = digitalRead(freq_pin);
-		if (result == DIR_CW) {
-			if(b == LOW)
-				encoder_value += 10;
-			else
-				encoder_value += 100;
+		if(result == DIR_CW) {
+			if(b == LOW) { encoder_value += 10;  }
+			else         { encoder_value += 100; }
 		}
-		if (result == DIR_CCW) {
-			if(b == LOW)
-				encoder_value -= 10;
-			else
-				encoder_value -= 100;
+		if(result == DIR_CCW) {
+			if(b == LOW) { encoder_value -= 10;  }
+			else         { encoder_value -= 100; }
 		}
 		encoder_changed = true;
 	}
