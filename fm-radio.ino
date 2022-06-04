@@ -51,10 +51,10 @@ const unsigned char mute_pin     = A0;
 const unsigned char pwr_pin      = A3;
 const unsigned char freq_pin     = 13;
 // Buttons
-TButton ButtonUp    (vol_up_pin);   // Volume up button
-TButton ButtonDown  (vol_down_pin); // Volume down button
-TButton ButtonMute  (mute_pin);     // Mute button
-TButton ButtonPower (pwr_pin);      // Power button
+TButton ButtonUp    (vol_up_pin,   false); // Volume up button
+TButton ButtonDown  (vol_down_pin, false); // Volume down button
+TButton ButtonMute  (mute_pin,     false); // Mute button
+TButton ButtonPower (pwr_pin,      true ); // Power button
 // Radio
 SI4703    radio;       // Create instance of SI4703
 RDSParser rds;         // RDS Parser
@@ -186,22 +186,15 @@ void volume_down() {
 void wake() {
 	change_state(STATE_WAKE);
 	Serial.println("Turning on...");
-	radio.init();
-	radio.debugEnable();
-	radio.setBandFrequency(RADIO_BAND_FM, encoder_value);
-	radio.setMono(false);
 	radio.setMute(false);
-	radio.setVolume(8);
-
-
-		lcd.display();
-		radio.setMute(0);
+	//radio.setVolume(8);
+	lcd.display();
+	radio.setMute(0);
 }
 void sleep() {
 		change_state(STATE_SLEEP);
 		Serial.println("Turing off...");
 		radio.setMute(1);
-		radio.term();
 		save_to_eeprom(EEPROM_FREQ_ADX, encoder_value);
 		lcd.noDisplay();
 }
@@ -233,6 +226,7 @@ void setup() {
 
 	// Pins
 	pinMode(freq_pin, INPUT);
+	pinMode(pwr_pin,  INPUT);
 
 	// EEPROM
 	Serial.print("encoder_value="); Serial.println(encoder_value);
@@ -247,13 +241,13 @@ void do_states(void) {
 	switch (state) {
 		case STATE_INIT:
 			{
-				/* while(ButtonPower.peek()) { */
-				/* 	lcd.setCursor(0, 0); */
-				/* 	lcd.print("   Check power"); */
-				/* 	lcd.setCursor(0, 1); */
-				/* 	lcd.print("     button"); */
-				/* 	delay(250); */
-				/* } */
+				while(!ButtonPower.peek()) {
+					lcd.setCursor(0, 0);
+					lcd.print("   Check power");
+					lcd.setCursor(0, 1);
+					lcd.print("     button");
+					delay(250);
+				}
 				lcd.clear();
 				lcd.setCursor(0, 0);
 				lcd.print("RDS :          ");
@@ -326,9 +320,8 @@ void do_states(void) {
 				break;
 			}
 		case STATE_SLEEP:
-			//if(ButtonPower.isNegEdge()) {
-			if(ButtonPower.peek()) {
-				change_state(STATE_WAKE);
+			if(ButtonPower.isPosEdge()) {
+				wake();
 			}
 			break;
 		case STATE_TUNE:
@@ -349,15 +342,11 @@ void do_states(void) {
 
 void loop() {
 	if(encoder_changed) { // Has the encoder changed position?
-		Serial.println("1");
 		// Set and display frequency
 		encoder_value = check_frequency(encoder_value);
-		Serial.println("2");
 		Serial.println(encoder_value);
 		radio.setFrequency(encoder_value);
-		Serial.println("3");
 		DisplayFrequency();
-		Serial.println("4");
 
 		if(encoder_value == last_rds_freq) {
 			DisplayServiceName(last_rds);
@@ -372,20 +361,13 @@ void loop() {
 	do_states();
 
 	// Power button
-	/* static bool should_power_on = true; */
-	/* int power_button_state = ButtonPower.peek(); */
-	/* //Serial.println(power_button_state); */
-	/* if(ButtonPower.isPosEdge()) { */
-	/* 	sleep(); */
-	/* 	should_power_on = !should_power_on; */
-	/* } */
-	/* if(should_power_on && !power_button_state) { */
-	/* 	wake(); */
-	/* 	should_power_on = !should_power_on; */
-	/* } */
+	//Serial.println(power_button_state);
+	if(ButtonPower.isNegEdge() && state != STATE_SLEEP) {
+		sleep();
+	}
 
 	// Display something on the lcd when muted.
-	if(radio.getMute() == true /* && !power_button_state */) {
+	if(radio.getMute() == true && ButtonPower.peek()) {
 		lcd.setCursor(15, 0);
 		lcd.write(byte(0));
 	}

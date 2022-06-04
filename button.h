@@ -5,6 +5,7 @@ class TButton
 {
   private:
     unsigned char pin;
+	bool analog = false;
     bool newLevel;
     bool previousLevel;
     bool posEdge;
@@ -12,7 +13,7 @@ class TButton
 
     void loop();
   public:
-    TButton(unsigned char);
+	TButton(unsigned char, bool);
     ~TButton();
     bool peek();
     bool isPosEdge();
