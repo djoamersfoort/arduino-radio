@@ -18,15 +18,13 @@
 enum MYSTATES {
 	STATE_INIT = 0,     // 0
 	STATE_LISTEN,       // 1
-	STATE_TUNE,         // 2
-	STATE_VOLUP,        // 3
-	STATE_VOLDWN,       // 4
-	STATE_VOL_RELEASE,  // 5
-	STATE_MUTE,         // 6
-	STATE_MUTE_RELEASE, // 7
-	STATE_SLEEP,        // 8
-	STATE_WAKE,         // 9
-	STANDARD,           // 10
+	STATE_VOLUP,        // 2
+	STATE_VOLDWN,       // 3
+	STATE_VOL_RELEASE,  // 4
+	STATE_MUTE,         // 5
+	STATE_SLEEP,        // 6
+	STATE_WAKE,         // 7
+	STANDARD,           // 8
 };
 MYSTATES state = STATE_INIT;
 
@@ -114,6 +112,7 @@ void DisplayServiceName(char *name) {
 
 	Serial.print("DisplayServiceName() = "); Serial.println(name);
 }
+
 // Check if the frequency is within 87.50 <-> 108.00 Mhz.
 int check_frequency(int value) {
 	if(value < 8749) {
@@ -177,20 +176,22 @@ void volume_down() {
 	}
 }
 
+static int isMuted = radio.getMute(); // Was it muted before sleeping?
 void wake() {
 	change_state(STATE_WAKE);
 	Serial.println("Turning on...");
-	radio.setMute(false);
-	//radio.setVolume(8);
 	lcd.display();
-	radio.setMute(0);
+	radio.setMute(isMuted);
 }
 void sleep() {
-		change_state(STATE_SLEEP);
-		Serial.println("Turing off...");
-		radio.setMute(1);
-		save_to_eeprom(EEPROM_FREQ_ADX, encoder_value);
-		lcd.noDisplay();
+	change_state(STATE_SLEEP);
+	Serial.println("Turing off...");
+
+	isMuted = radio.getMute();
+	radio.setMute(1);
+
+	save_to_eeprom(EEPROM_FREQ_ADX, encoder_value);
+	lcd.noDisplay();
 }
 
 void setup() {
@@ -320,17 +321,18 @@ void do_states(void) {
 				}
 				break;
 			}
-		case STATE_TUNE:
-			break;
-		case STATE_MUTE_RELEASE:
-			break;
 		case STATE_WAKE:
-			change_state(STATE_LISTEN);
-			break;
+			{
+				if(radio.getMute()) {
+					change_state(STATE_MUTE);
+				} else {
+					change_state(STATE_LISTEN);
+				}
+				break;
+			}
 		case STANDARD:
 			{
 				Serial.println("STANDARD");
-				//change_state(STATE_LISTEN);
 				break;
 			}
 	}
@@ -340,7 +342,6 @@ void loop() {
 	if(encoder_changed) { // Has the encoder changed position?
 		// Set and display frequency
 		encoder_value = check_frequency(encoder_value);
-		Serial.println(encoder_value);
 		radio.setFrequency(encoder_value);
 		DisplayFrequency();
 
