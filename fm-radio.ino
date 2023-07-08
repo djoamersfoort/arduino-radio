@@ -57,7 +57,7 @@ char     *last_rds;    // RDS buffer
 int       last_rds_freq;
 // Rotary encoder
 uint16_t encoder_value = read_eeprom(EEPROM_FREQ_ADX); // Used to keep track of frequency
-bool     encoder_changed;    // Has the encoders position changed?
+bool     encoder_changed;    // Has the encoder's position changed?
 Rotary   r = Rotary(A2, A1);
 
 void RDS_process(uint16_t block1, uint16_t block2, uint16_t block3, uint16_t block4) {
@@ -113,26 +113,6 @@ void DisplayServiceName(char *name) {
 	Serial.print("DisplayServiceName() = "); Serial.println(name);
 }
 
-// Check if the frequency is within 87.50 <-> 108.00 Mhz.
-int check_frequency(int value) {
-	if(value < 8749) {
-		lcd.setCursor(0, 1);
-		lcd.print("Error: Too low  ");
-		Serial.println("Low freq");
-
-		delay(500);
-		value = 8750;
-	}
-	if(value > 10801) {
-		lcd.setCursor(0, 1);
-		lcd.print("Error: Too high ");
-		Serial.println("High freq");
-
-		delay(500);
-		value = 10800;
-	}
-	return value;
-}
 // Display the volume on the lcd
 /*
 	Volume: {radio.getVolume()}
@@ -176,6 +156,27 @@ void volume_down() {
 	}
 }
 
+// Check if the frequency is within 87.50 <-> 108.00 Mhz.
+int check_frequency(int value) {
+	if(value < 8749) {
+		lcd.setCursor(0, 1);
+		lcd.print("Error: Too low  ");
+		Serial.println("Low freq");
+
+		delay(500);
+		value = 8750;
+	}
+	if(value > 10801) {
+		lcd.setCursor(0, 1);
+		lcd.print("Error: Too high ");
+		Serial.println("High freq");
+
+		delay(500);
+		value = 10800;
+	}
+	return value;
+}
+
 static int isMuted = radio.getMute(); // Was it muted before sleeping?
 void wake() {
 	change_state(STATE_WAKE);
@@ -185,7 +186,7 @@ void wake() {
 }
 void sleep() {
 	change_state(STATE_SLEEP);
-	Serial.println("Turing off...");
+	Serial.println("Turning off...");
 
 	isMuted = radio.getMute();
 	radio.setMute(1);
@@ -205,19 +206,30 @@ void setup() {
 	lcd.print("Loading...");
 
 	// Radio
+	lcd.setCursor(11, 2);
+	lcd.print("radio");
 	radio.init();
+	Serial.println("radio: init");
 	radio.debugEnable();
-	radio.setBandFrequency(RADIO_BAND_FM, encoder_value);
+	// radio.setBandFrequency(RADIO_BAND_FM, encoder_value);
+	radio.setBandFrequency(RADIO_BAND_FM, 9000);
 	radio.setMono(false);
 	radio.setMute(false);
 	radio.setVolume(8);
 
 	// Rotary
+	lcd.setCursor(10, 2);
+	lcd.print("rotary");
 	r.begin(false, true);
 
 	// RDS
+	lcd.setCursor(13, 2);
+	lcd.print("rds");
 	radio.attachReceiveRDS(RDS_process);
 	rds.attachServicenNameCallback(DisplayServiceName);
+
+	lcd.setCursor(13, 2);
+	lcd.print("   ");
 
 	// Pins
 	pinMode(freq_pin, INPUT);
@@ -236,13 +248,13 @@ void do_states(void) {
 	switch (state) {
 		case STATE_INIT:
 			{
-				while(!ButtonPower.peek()) {
+				/*while(!ButtonPower.peek()) {
 					lcd.setCursor(0, 0);
 					lcd.print("   Check power");
 					lcd.setCursor(0, 1);
 					lcd.print("     button");
 					delay(250);
-				}
+				}*/
 				lcd.clear();
 				lcd.setCursor(0, 0);
 				lcd.print("RDS :          ");
@@ -358,12 +370,12 @@ void loop() {
 	do_states();
 
 	// Power button
-	if(ButtonPower.isNegEdge() && state != STATE_SLEEP) {
+	/*if(ButtonPower.isNegEdge() && state != STATE_SLEEP) {
 		sleep();
-	}
+	}*/
 
 	// Display something on the lcd when muted.
-	if(radio.getMute() == true && ButtonPower.peek()) {
+	if(radio.getMute() == true /*&& ButtonPower.peek()*/) {
 		lcd.setCursor(15, 0);
 		lcd.write(byte(0));
 	}
